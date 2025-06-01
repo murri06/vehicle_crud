@@ -1,0 +1,22 @@
+RewriteEngine On
+
+# Remove trailing slashes
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.+)/$ /$1 [R=301,L]
+
+# Static files - serve directly
+RewriteCond %{REQUEST_FILENAME} \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ [NC]
+RewriteRule ^ - [L]
+
+# API routes - these must come BEFORE the catch-all rule
+RewriteRule ^api/create/?$ api.php?action=create [L,QSA]
+RewriteRule ^api/read/?$ api.php?action=read [L,QSA]
+RewriteRule ^api/update/?$ api.php?action=update [L,QSA]
+RewriteRule ^api/delete/([0-9]+)/?$ api.php?action=delete&id=$1 [L,QSA]
+RewriteRule ^api/vehicle/([0-9]+)/?$ api.php?action=readOne&id=$1 [L,QSA]
+RewriteRule ^api/search/([^/]+)/?$ api.php?action=search&keywords=$1 [L,QSA]
+
+# Catch-all rule for front-end routing - this must be LAST
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
